@@ -1,43 +1,28 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
-const USERS = [
-  {
-    id: 1,
-    name: 'Sushank',
-  },
-  {
-    id: 2,
-    name: 'Amrita',
-  },
-];
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  @Get()
-  getUsers(@Query('name') name: string) {
-    if (name) {
-      return USERS.filter((user) =>
-        user.name.toLowerCase().includes(name.toLowerCase()),
-      );
-    }
+  constructor(private readonly userService: UserService) {}
 
-    return USERS;
+  @Get()
+  getUsers(@Query('name') name: string): unknown {
+    return this.userService.findAllUsers(name);
+
+    // if (name) {
+    //   return USERS.filter((user) =>
+    //     user.name.toLowerCase().includes(name.toLowerCase()),
+    //   );
+    // }
+    // return USERS;
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string) {
+  getUserById(@Param('id') id: string): unknown {
     const userId = id;
-    const result = USERS.find((user) => String(user.id) === userId);
-
-    if (!result) {
-      return {
-        message: 'Resource with given id is not found',
-      };
-    }
-
-    return result;
+    return this.userService.findAllUserById(userId);
   }
 
   @Post()
