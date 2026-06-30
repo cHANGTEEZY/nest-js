@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
@@ -8,27 +17,19 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getUsers(@Query('name') name: string): unknown {
+  getUsers(@Query('name') name: string) {
     return this.userService.findAllUsers(name);
-
-    // if (name) {
-    //   return USERS.filter((user) =>
-    //     user.name.toLowerCase().includes(name.toLowerCase()),
-    //   );
-    // }
-    // return USERS;
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string): unknown {
-    const userId = id;
-    return this.userService.findAllUserById(userId);
+  getUserById(@Param('id') id: string) {
+    return this.userService.findAllUserById(id);
   }
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
     return {
-      data: createUserDto,
+      data: this.userService.createUser(createUserDto),
       message: 'User Created Successfully',
     };
   }
@@ -36,8 +37,16 @@ export class UserController {
   @Put(':id')
   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return {
-      data: { id, ...updateUserDto },
-      message: 'User Created Successfully',
+      data: this.userService.updateUser(id, updateUserDto),
+      message: 'User Updated Successfully',
+    };
+  }
+
+  @Delete(':id')
+  deleteUser(@Param('id') id: string) {
+    return {
+      data: this.userService.deleteUser(id),
+      message: 'User Deleted Successfully',
     };
   }
 }
